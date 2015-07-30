@@ -1,0 +1,49 @@
+Configure
+
+The location of the "recorderWorker.js" should be mentioned in the Fr.workerPath item of "jquery.voice.js" file. This is really necessary for the working. By default, it's value is :
+cdn/recorderWorker.js
+It's a relative path from the file it's ran. If the file location is http://mySite.com/project/index.html and "recorderWorker.js" is in http://mySite.com/project/cdn/recorderWorker.js , then the value should be the above "cdn/recorderWorker.js".
+From version 0.3 onwards, if you're going to use MP3 conversion, you have to configure the value of Fr.mp3WorkerPath item. The default value is :
+cdn/mp3Worker.js
+Also, for MP3 you have to define the path of libmp3lame.min.js in the first line of mp3Worker.js.
+Recording
+
+We start recording by calling the function Fr.voice.record(); and the user will be asked for authorizing the use of microphone. if the user accepts it, recording will start and if user declined, an alert box will be opened.
+Fr.voice.record(false, callback());
+There is also a feature to live output the recording voice to the speaker. You can do this by making the first parameter of Fr.voice.record() to boolean true.
+The recording is stopped using :
+Fr.voice.stop();
+It doesn't accept any parameters and the return value will be Fr.voice object itself.
+Export
+
+Fr.voice.export can be used for obtaining the recorded audio URL and the blob data of the recorder audio. Example of obtaining blob data :
+Fr.voice.export(function(blob){
+  console.log(blob); // The blob data
+}, "blob");
+It is not necessarily required to make the 2nd parameter value to "blob", because by default it's set as "blob".
+You can also get the blob URL of the recorded audio :
+Fr.voice.export(function(url){
+  console.log(url); // The blob URL
+}, "URL");
+ 
+An example of making an audio element to play the audio file :
+Fr.voice.export(function(url){
+  $("<audio src='"+ url +"'></audio>").appendTo("body");
+  $("body audio:last")[0].play();
+}, "URL");
+Base64
+
+(This feature has been suggested by the user payam in the comments)
+You can obtain the base64 data of the audio with $.voice.export and this data can be used to store the audio in the database.
+Fr.voice.export(function(base64){
+  $.post("server.php", {"audio" : base64}, function(){
+    // Saved in the database
+  });
+}, "base64");
+All you got to do in the server is to store the sent data in the database.
+MP3
+
+Another audio export method you can use is MP3 (from version 0.3) :
+Fr.voice.export(function(mp3){
+  console.log(mp3); // The MP3 Data encoded in Base64
+}, "mp3");
